@@ -25,7 +25,19 @@ ppm_image& ppm_image::operator=(const ppm_image& orig)
       return *this;
    }
 
-   // todo: your code here
+   format = orig.format;
+   w = orig.w;
+   h = orig.h;
+   max_color_val = orig.max_color_val;
+   ppm_pixel colors[w * h];
+   for(int i = 0; i < w; i++) {
+      for(int j = 0; j < h; j++) {
+         unsigned char r = this->colors[i * w + j].r;
+         unsigned char g = this->colors[i * w + j].g;
+         unsigned char b = this->colors[i * w + j].b;
+         colors[i * w + j] = {r, g, b};
+      }
+   }
 
    return *this;   
 }
@@ -53,8 +65,7 @@ bool ppm_image::load(const std::string& filename)
       stringstream height(h_string);
       width >> w;
       height >> h;
-      int size = w * h;
-      for(int i = 0; i < size; i++) {
+      for(int i = 0; i < w * h; i++) {
          unsigned char r = 0;
          unsigned char g = 0;
          unsigned char b = 0;
@@ -71,14 +82,24 @@ bool ppm_image::load(const std::string& filename)
 
 bool ppm_image::save(const std::string& filename) const
 {
-   fstream fileStream;
-   fileStream.open(filename);
+   fstream newfile;
+   newfile.open (filename);
 
-   if (fileStream.fail()) {
+   if (w == 0 || h == 0 || newfile.fail()) {
       return false;
-   } else {
-      return true;
    }
+
+   newfile << format << endl;
+   newfile << w << " " << h << endl;
+   newfile << max_color_val << endl;
+   for(int i = 0; i < h; i++) {
+      for(int j = 0; j < w; j++) {
+         newfile << colors[i * w + j].r << " " << colors[i * w + j].g << " " << colors[i * w + j].b << " ";
+      }
+      newfile << endl;
+   }
+   newfile.close();
+   return true;
 }
 
  ppm_image ppm_image::resize(int w, int h) const
@@ -89,7 +110,15 @@ bool ppm_image::save(const std::string& filename) const
 
 ppm_image ppm_image::flip_horizontal() const
 {
-    ppm_image result;
+   ppm_image result;
+   result = *this;
+   for (int i = 0; i < result.h/2; i++) {
+      for (int j = 0; j < result.w; j++) {
+         ppm_pixel temp = result.colors[i * w + j];
+         result.colors[i * w + j] = result.colors[(h-1-i) * w + j];
+         result.colors[(h-1-i) * w + j] = temp;
+      }
+   }
     return result;
 }
 

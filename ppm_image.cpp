@@ -12,10 +12,29 @@ ppm_image::ppm_image()
 
 ppm_image::ppm_image(int w, int h) 
 {
+   format = " ";
+   wid = w;
+   hei = h;
+   colors = new ppm_pixel [wid * hei];
 }
 
 ppm_image::ppm_image(const ppm_image& orig)
 {
+   format = orig.format;
+   wid = orig.wid;
+   hei = orig.hei;
+   max_color_val = orig.max_color_val;
+   colors = new ppm_pixel [wid * hei];
+   for(int i = 0; i < wid; i++) {
+      for(int j = 0; j < hei; j++) {
+         // unsigned char r = this->colors[i * w + j]->r;
+         // unsigned char g = this->colors[i * w + j]->g;
+         // unsigned char b = this->colors[i * w + j]->b;
+         // ppm_pixel next = {r, g, b};
+         // colors[i * w + j] = next;
+         colors[i * wid + j] = orig.colors[i * wid + j];
+      }
+   }
 }
 
 ppm_image& ppm_image::operator=(const ppm_image& orig)
@@ -26,18 +45,21 @@ ppm_image& ppm_image::operator=(const ppm_image& orig)
    }
 
    format = orig.format;
-   w = orig.w;
-   h = orig.h;
+   wid = orig.wid;
+   hei = orig.hei;
    max_color_val = orig.max_color_val;
-   ppm_pixel colors[w * h];
-   for(int i = 0; i < w; i++) {
-      for(int j = 0; j < h; j++) {
-         unsigned char r = this->colors[i * w + j].r;
-         unsigned char g = this->colors[i * w + j].g;
-         unsigned char b = this->colors[i * w + j].b;
-         colors[i * w + j] = {r, g, b};
+   colors = new ppm_pixel [wid * hei];
+   for(int i = 0; i < wid; i++) {
+      for(int j = 0; j < hei; j++) {
+         // unsigned char r = this->colors[i * w + j]->r;
+         // unsigned char g = this->colors[i * w + j]->g;
+         // unsigned char b = this->colors[i * w + j]->b;
+         // ppm_pixel next = {r, g, b};
+         // colors[i * w + j] = next;
+         colors[i * wid + j] = orig.colors[i * wid + j];
       }
    }
+   // should colors be deleted?
 
    return *this;   
 }
@@ -54,26 +76,21 @@ bool ppm_image::load(const std::string& filename)
       file.close();
       return false;
    } else {
-      string w_string;
-      string h_string;
       file >> format; 
-      file >> w_string; // width
-      file >> h_string; // height
+      file >> wid;
+      file >> hei;
       file >> max_color_val; 
 
-      stringstream width(w_string);
-      stringstream height(h_string);
-      width >> w;
-      height >> h;
-      for(int i = 0; i < w * h; i++) {
-         unsigned char r = 0;
-         unsigned char g = 0;
-         unsigned char b = 0;
+      colors = new ppm_pixel [wid * hei];
+
+      for(int i = 0; i < wid * hei; i++) {
+         int r,g,b;
          file >> r;
          file >> g;
          file >> b;
-         ppm_pixel next = {r, g, b};
-         colors[i] = next;
+         colors[i].r = (unsigned char) r;
+         colors[i].g = (unsigned char) g;
+         colors[i].b = (unsigned char) b;
       }
       file.close();
       return true;
@@ -82,19 +99,22 @@ bool ppm_image::load(const std::string& filename)
 
 bool ppm_image::save(const std::string& filename) const
 {
-   fstream newfile;
-   newfile.open (filename);
+   ofstream newfile (filename);
 
-   if (w == 0 || h == 0 || newfile.fail()) {
+   if (wid == 0 || hei == 0 || newfile.fail()) {
       return false;
    }
 
    newfile << format << endl;
-   newfile << w << " " << h << endl;
+   newfile << wid << " " << hei << endl;
    newfile << max_color_val << endl;
-   for(int i = 0; i < h; i++) {
-      for(int j = 0; j < w; j++) {
-         newfile << colors[i * w + j].r << " " << colors[i * w + j].g << " " << colors[i * w + j].b << " ";
+   for(int i = 0; i < hei; i++) {
+      for(int j = 0; j < wid; j++) {
+         int r, g, b;
+         r = (int) colors[i * wid + j].r;
+         g = (int) colors[i * wid + j].g;
+         b = (int) colors[i * wid + j].b;
+         newfile << r << " " << g << " " << b << " ";
       }
       newfile << endl;
    }
@@ -112,11 +132,16 @@ ppm_image ppm_image::flip_horizontal() const
 {
    ppm_image result;
    result = *this;
-   for (int i = 0; i < result.h/2; i++) {
-      for (int j = 0; j < result.w; j++) {
-         ppm_pixel temp = result.colors[i * w + j];
-         result.colors[i * w + j] = result.colors[(h-1-i) * w + j];
-         result.colors[(h-1-i) * w + j] = temp;
+   for (int i = 0; i < result.hei/2; i++) {
+      for (int j = 0; j < result.wid; j++) {
+         ppm_pixel* temp = new ppm_pixel; 
+         temp->r = result.colors[i * wid + j].r;
+         temp->g = result.colors[i * wid + j].g;
+         temp->b = result.colors[i * wid + j].b;
+         result.colors[i * wid + j] = result.colors[(hei-1-i) * wid + j];
+         result.colors[(hei-1-i) * wid + j].r = temp->r;
+         result.colors[(hei-1-i) * wid + j].g = temp->g;
+         result.colors[(hei-1-i) * wid + j].b = temp->b;
       }
    }
     return result;
@@ -152,8 +177,13 @@ ppm_image ppm_image::grayscale() const
 
 ppm_pixel ppm_image::get(int row, int col) const
 {
-   if(row <= h && col <= w) {
-      return colors[row * w + col];
+   if(row <= hei && col <= wid) {
+      ppm_pixel result;
+      result.r = colors[row * wid + col].r;
+      result.g = colors[row * wid + col].g;
+      result.b = colors[row * wid + col].b;
+      // return colors[row * w + col];
+      return result;
    } else {
       cout << "Please enter valid row and column numbers!" << endl;
       ppm_pixel empty = {0, 0, 0};
@@ -163,15 +193,21 @@ ppm_pixel ppm_image::get(int row, int col) const
 
 void ppm_image::set(int row, int col, const ppm_pixel& c)
 {
-   colors[row * w + col] = c;
+   // ppm_pixel input;
+   // input->r = c.r;
+   // input->g = c.g;
+   // input->b = c.b;
+   colors[row * wid + col].r = c.r;
+   colors[row * wid + col].g = c.g;
+   colors[row * wid + col].b = c.b;
 }
 
 int ppm_image::height() const
 {
-   return h;
+   return hei;
 }
 
 int ppm_image::width() const
 {
-   return w;
+   return wid;
 }

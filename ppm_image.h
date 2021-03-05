@@ -22,10 +22,10 @@ namespace agl
    {
    private:
       string format;
-      int w;
-      int h;
+      int wid;
+      int hei;
       int max_color_val;
-      ppm_pixel colors[];
+      ppm_pixel *colors;
    public:
       ppm_image();
       ppm_image(int width, int height);

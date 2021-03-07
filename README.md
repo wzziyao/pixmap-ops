@@ -95,5 +95,5 @@ ppm_image boxBlur()
 
 Apply the sepia, border, box blur, and swirl colors filters on an image:
 
-<img src="images/hogwarts_uniqye.jpg" alt="unique" width="500"/>
+<img src="images/hogwarts_unique.jpg" alt="unique" width="500"/>
 

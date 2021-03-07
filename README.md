@@ -73,7 +73,7 @@ ppm_image sepia()
 **Border:**
 Add a black border around the edge of an image.
 ```
-ppm_image rotateClockwise()
+ppm_image border()
 ```
 <img src="images/hogwarts_border.jpg" alt="border" width="500"/>
 

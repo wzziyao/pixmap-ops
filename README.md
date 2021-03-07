@@ -45,48 +45,55 @@ pixmap-ops/build $ ../bin/pixmap_art
 
 ## Image operators
 
-Original Image:
-<img src="images/hogwarts.ppm" alt="original" width="500"/>
+**Original Image:**
 
-Rotate Clockwise:
+<img src="images/hogwarts.jpg" alt="original" width="500"/>
+
+**Rotate Clockwise:**
+Rotate an image 90 degree clockwise.
 ```
 ppm_image rotateClockwise()
 ```
-<img src="images/hogwarts_rotate.ppm" alt="rotateClockwise" width="500"/>
+<img src="images/hogwarts_rotate.jpg" alt="rotateClockwise" width="500"/>
 
-Invert Colors:
+**Invert Colors:**
+Invert the colors of an image, white becomes black, orange becomes blue, and so on. 
 ```
 ppm_image invertColors()
 ```
-<img src="images/hogwarts_invert.ppm" alt="invertColors" width="500"/>
+<img src="images/hogwarts_invert.jpg" alt="invertColors" width="500"/>
 
-Sepia:
+**Sepia:**
+Give an image an old-timey feel by making it look reddish-brown.
 ```
 ppm_image sepia()
 ```
-<img src="images/hogwarts_sepia.ppm" alt="sepia" width="500"/>
+<img src="images/hogwarts_sepia.jpg" alt="sepia" width="500"/>
 
-Border:
+**Border:**
+Add a black border around the edge of an image.
 ```
 ppm_image rotateClockwise()
 ```
-<img src="images/hogwarts_border.ppm" alt="border" width="500"/>
+<img src="images/hogwarts_border.jpg" alt="border" width="500"/>
 
-Swirl Colors:
+**Swirl Colors:**
+Rotate the colors of an image.
 ```
 ppm_image swirlColors()
 ```
-<img src="images/hogwarts_swirl.ppm" alt="swirlColors" width="500"/>
+<img src="images/hogwarts_swirl.jpg" alt="swirlColors" width="500"/>
 
-Box Blur:
+**Box Blur:**
+Create the effect of blurring or softening an image.
 ```
 ppm_image boxBlur()
 ```
-<img src="images/hogwarts_blur.ppm" alt="boxBlur" width="500"/>
+<img src="images/hogwarts_blur.jpg" alt="boxBlur" width="500"/>
 
 ## Results
 
-After applying the sepia, border, box blur, and swirl colors filters:
+Apply the sepia, border, box blur, and swirl colors filters on an image:
 
-<img src="images/hogwarts_uniqye.ppm" alt="unique" width="500"/>
+<img src="images/hogwarts_uniqye.jpg" alt="unique" width="500"/>
 

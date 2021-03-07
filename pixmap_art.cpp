@@ -5,6 +5,7 @@ using namespace agl;
 
 int main(int argc, char** argv)
 {
+   // test begin
    ppm_image image;
    image.load("../images/hogwarts.ppm");
 
@@ -31,5 +32,15 @@ int main(int argc, char** argv)
    // box blur
    ppm_image blur = image.boxBlur(); 
    blur.save("hogwarts_blur.ppm"); 
+   // test done
+
+   // unique image
+   ppm_image unique;
+   unique.load("../images/hogwarts.ppm");
+   ppm_image i1 = unique.sepia(); 
+   ppm_image i2 = i1.border(); 
+   ppm_image i3 = i2.boxBlur(); 
+   ppm_image i4 = i3.swirlColors(); 
+   i4.save("hogwarts_unique.ppm");
 }
 

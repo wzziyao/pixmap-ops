@@ -78,5 +78,17 @@ namespace agl
 
       // return the height of the image
       int height() const;
+
+      ppm_image rotateClockwise() const;
+
+      ppm_image invertColors() const;
+
+      ppm_image sepia() const;
+
+      ppm_image border() const;
+
+      ppm_image swirlColors() const;
+
+      ppm_image boxBlur() const;
    };
 }

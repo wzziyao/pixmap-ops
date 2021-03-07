@@ -144,8 +144,9 @@ bool ppm_image::save(const std::string& filename) const
 
 ppm_image ppm_image::flip_horizontal() const
 {
-   ppm_image result;
-   result = *this;
+   ppm_image result(wid, hei);
+   result.format = format;
+   result.max_color_val = max_color_val;
    for (int i = 0; i < result.hei/2; i++) {
       for (int j = 0; j < result.wid; j++) {
          ppm_pixel* temp = new ppm_pixel; 
@@ -208,8 +209,9 @@ ppm_image ppm_image::alpha_blend(const ppm_image& other, float alpha) const
       if (alpha >= 1 || alpha <= 0) {
          throw "Alpha must be in the range [0, 1]!";
       }
-      ppm_image result;
-      result = *this;
+      ppm_image result(wid, hei);
+      result.format = format;
+      result.max_color_val = max_color_val;
       for (int i = 0; i < result.hei; i++) {
          for (int j = 0; j < result.wid; j++) {
             int r, g, b;
@@ -230,8 +232,9 @@ ppm_image ppm_image::alpha_blend(const ppm_image& other, float alpha) const
 
 ppm_image ppm_image::gammaCorrect(float gamma) const
 {
-   ppm_image result;
-   result = *this;
+   ppm_image result(wid, hei);
+   result.format = format;
+   result.max_color_val = max_color_val;
    for (int i = 0; i < result.hei; i++) {
       for (int j = 0; j < result.wid; j++) {
          int r, g, b;
@@ -248,8 +251,9 @@ ppm_image ppm_image::gammaCorrect(float gamma) const
 
 ppm_image ppm_image::grayscale() const
 {
-   ppm_image result;
-   result = *this;
+   ppm_image result(wid, hei);
+   result.format = format;
+   result.max_color_val = max_color_val;
    for (int i = 0; i < result.hei; i++) {
       for (int j = 0; j < result.wid; j++) {
          int r, g, b, c;
@@ -301,4 +305,152 @@ int ppm_image::height() const
 int ppm_image::width() const
 {
    return wid;
+}
+
+ppm_image ppm_image::rotateClockwise() const
+{
+   int h = hei;
+   int w = wid;
+   ppm_image result(h, w);
+   result.format = format;
+   result.max_color_val = max_color_val;
+
+   int count = 0;
+   for (int i = 0; i < wid; i++){
+      for (int j = hei-1; j >= 0; j--) {
+         result.colors[count] = colors[j * wid + i];
+         count++;
+      }
+   }
+   return result;
+}
+
+ppm_image ppm_image::invertColors() const
+{
+   ppm_image result(wid, hei);
+   result.format = format;
+   result.max_color_val = max_color_val;
+
+   for (int i = 0; i < hei; i++) {
+      for (int j = 0; j < wid; j++) {
+         result.colors[i * wid + j].r = (unsigned char) (255 - (int)colors[i * wid + j].r);
+         result.colors[i * wid + j].g = (unsigned char) (255 - (int)colors[i * wid + j].g);
+         result.colors[i * wid + j].b = (unsigned char) (255 - (int)colors[i * wid + j].b);
+      }
+   }
+   return result;
+}
+
+ppm_image ppm_image::sepia() const
+{
+   ppm_image result(wid, hei);
+   result.format = format;
+   result.max_color_val = max_color_val;
+
+   for (int i = 0; i < hei; i++) {
+      for (int j = 0; j < wid; j++) {
+         int r, g, b;
+            r = (int) (0.393 * (float) colors[i * result.wid + j].r
+             + 0.769 * (float) colors[i * result.wid + j].g 
+             + 0.189 * (float) colors[i * result.wid + j].b);
+            g = (int) (0.349 * (float) colors[i * result.wid + j].r
+             + 0.686 * (float) colors[i * result.wid + j].g 
+             + 0.168 * (float) colors[i * result.wid + j].b);
+            b = (int) (0.272 * (float) colors[i * result.wid + j].r
+             + 0.534 * (float) colors[i * result.wid + j].g 
+             + 0.131 * (float) colors[i * result.wid + j].b);
+            r = min(r, 255);
+            g = min(g, 255);
+            b = min(b, 255);
+            result.colors[i * result.wid + j].r = (unsigned char) r;
+            result.colors[i * result.wid + j].g = (unsigned char) g;
+            result.colors[i * result.wid + j].b = (unsigned char) b;
+      }
+   }
+   return result;
+}
+
+ppm_image ppm_image::border() const
+{
+   ppm_image result(wid, hei);
+   result.format = format;
+   result.max_color_val = max_color_val;
+
+   for (int i = 0; i < hei; i++) {
+      for (int j = 0; j < wid; j++) {
+         if (!(i < 50 || i > hei-51 || j < 50 || j > wid-51)) {
+            result.colors[i * wid + j] = colors[i * wid + j];
+         }
+      }
+   }
+   return result;
+}
+
+ppm_image ppm_image::swirlColors() const
+{
+   ppm_image result(wid, hei);
+   result.format = format;
+   result.max_color_val = max_color_val;
+
+   for (int i = 0; i < hei; i++) {
+      for (int j = 0; j < wid; j++) {
+         result.colors[i * wid + j].r = colors[i * wid + j].g;
+         result.colors[i * wid + j].g = colors[i * wid + j].b;
+         result.colors[i * wid + j].b = colors[i * wid + j].r;
+      }
+   }
+   return result;
+}
+
+ppm_image ppm_image::boxBlur() const
+{
+   ppm_image result(wid, hei);
+   result.format = format;
+   result.max_color_val = max_color_val;
+
+   int sum_r, sum_g, sum_b;
+
+   for (int i = 0; i < hei; i++) {
+      for (int j = 0; j < wid; j++) {
+         result.colors[i * wid + j] = colors[i * wid + j];
+         if (i < 1 || j < 1 || i + 1 == hei || j + 1 == wid) {
+            result.colors[i * wid + j] = colors[i * wid + j];
+         } else {
+            sum_r = (int)colors[(i-1) * wid + (j-1)].r 
+            + (int)colors[(i-1) * wid + j].r
+            + (int)colors[(i-1) * wid + (j+1)].r
+            + (int)colors[i * wid + (j-1)].r
+            + (int)colors[i * wid + j].r
+            + (int)colors[i * wid + (j+1)].r
+            + (int)colors[(i+1) * wid + (j-1)].r
+            + (int)colors[(i+1) * wid + j].r
+            + (int)colors[(i+1) * wid + (j+1)].r;
+
+            sum_g = (int)colors[(i-1) * wid + (j-1)].g
+            + (int)colors[(i-1) * wid + j].g
+            + (int)colors[(i-1) * wid + (j+1)].g
+            + (int)colors[i * wid + (j-1)].g
+            + (int)colors[i * wid + j].g
+            + (int)colors[i * wid + (j+1)].g
+            + (int)colors[(i+1) * wid + (j-1)].g
+            + (int)colors[(i+1) * wid + j].g
+            + (int)colors[(i+1) * wid + (j+1)].g;
+
+            sum_b = (int)colors[(i-1) * wid + (j-1)].b
+            + (int)colors[(i-1) * wid + j].b
+            + (int)colors[(i-1) * wid + (j+1)].b
+            + (int)colors[i * wid + (j-1)].b
+            + (int)colors[i * wid + j].b
+            + (int)colors[i * wid + (j+1)].b
+            + (int)colors[(i+1) * wid + (j-1)].b
+            + (int)colors[(i+1) * wid + j].b
+            + (int)colors[(i+1) * wid + (j+1)].b;
+
+            result.colors[i * wid + j].r = (unsigned char) (int) (sum_r/9);
+            result.colors[i * wid + j].g = (unsigned char) (int) (sum_g/9);
+            result.colors[i * wid + j].b = (unsigned char) (int) (sum_b/9);
+         }
+      }
+   }
+   return result;
 }

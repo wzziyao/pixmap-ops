@@ -165,7 +165,7 @@ ppm_image ppm_image::flip_horizontal() const
 ppm_image ppm_image::subimage(int startx, int starty, int w, int h) const
 {
    try {
-      if (startx < 0 || starty < 0 || startx >= hei || starty >= wid || w <= 0 || h <= 0) {
+      if (startx < 0 || starty < 0 || startx >= wid || starty >= hei || w <= 0 || h <= 0) {
          throw "Top left corner must be in the image, and image width and height must both be positive!";
       }
       ppm_image result(w, h);

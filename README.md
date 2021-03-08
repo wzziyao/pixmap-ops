@@ -93,7 +93,7 @@ ppm_image boxBlur()
 
 ## Results
 
-Apply the sepia, border, box blur, and swirl colors filters on an image:
+Apply the sepia, border, box blur, swirl colors, and alpha blend filters on an image:
 
 <img src="images/hogwarts_unique.jpg" alt="unique" width="500"/>
 

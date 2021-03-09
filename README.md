@@ -2,7 +2,7 @@
 
 Image manipulation demos based on the PPM image format.
 
-TODO: Add a representative image for your project here
+<img src="images/hogwarts_unique.jpg" alt="unique" width="500"/>
 
 ## How to build
 

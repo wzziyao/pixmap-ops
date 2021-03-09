@@ -8,6 +8,27 @@ int main(int argc, char** argv)
    ppm_image image;
    image.load("../images/hogwarts.ppm");
 
+   // default filters
+   // resize
+   ppm_image resize = image.resize(200,300);
+   resize.save("hogwarts-200-300.ppm");
+
+   // grayscale
+   ppm_image grayscale = image.grayscale(); 
+   grayscale.save("hogwarts-grayscale.ppm");
+
+   // flip horizontal
+   ppm_image flip = image.flip_horizontal(); 
+   flip.save("hogwarts-flip.ppm"); 
+
+   // sub image
+   ppm_image sub = image.subimage(200, 200, 100, 100); 
+   sub.save("hogwarts-subimage.ppm"); 
+
+   // gamma correction
+   ppm_image gamma = image.gammaCorrect(0.6f); 
+   gamma.save("hogwarts-gamma-0.6.ppm"); 
+   
    // my filters
    // rotate clockwise
    ppm_image rotate = image.rotateClockwise(); 

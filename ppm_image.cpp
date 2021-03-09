@@ -147,16 +147,12 @@ ppm_image ppm_image::flip_horizontal() const
    ppm_image result(wid, hei);
    result.format = format;
    result.max_color_val = max_color_val;
+   ppm_pixel temp;
    for (int i = 0; i < result.hei/2; i++) {
       for (int j = 0; j < result.wid; j++) {
-         ppm_pixel* temp = new ppm_pixel; 
-         temp->r = result.colors[i * wid + j].r;
-         temp->g = result.colors[i * wid + j].g;
-         temp->b = result.colors[i * wid + j].b;
-         result.colors[i * wid + j] = result.colors[(hei-1-i) * wid + j];
-         result.colors[(hei - 1 - i) * wid + j].r = temp->r;
-         result.colors[(hei - 1 - i) * wid + j].g = temp->g;
-         result.colors[(hei - 1 - i) * wid + j].b = temp->b;
+         temp = colors[i * wid + j];
+         result.colors[i * wid + j] = colors[(hei-1-i) * wid + j];
+         result.colors[(hei - 1 - i) * wid + j] = temp;
       }
    }
     return result;
@@ -192,8 +188,8 @@ void ppm_image::replace(const ppm_image& image, int startx, int starty)
          throw "Top left corner must be in the image!";
       }
       int count = 0;
-      for (int i = startx; i < startx + image.hei; i++){
-         for (int j = starty; j < starty + image.wid; j++) {
+      for (int i = startx; i < min(startx + image.hei, hei); i++){
+         for (int j = starty; j < min(starty + image.wid, wid); j++) {
             colors[i * wid + j] = image.colors[count];
             count++;
          }
